@@ -1,7 +1,11 @@
 from flask import Flask, jsonify, request
 import json
+from flask_cors import CORS
+
 
 app = Flask(__name__)
+CORS(app)
+
 LED_STATE_FILE = 'led_state.json'
 
 @app.route('/led/<state>', methods=['POST'])
