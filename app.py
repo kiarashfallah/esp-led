@@ -2,7 +2,8 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # Allow cross-origin requests from Flutter web app
+# Allow requests from your Netlify URL (replace with your actual Netlify URL)
+CORS(app, resources={r"/led": {"origins": "https://your-site-name.netlify.app"}})
 
 # In-memory LED state
 led_state = {"led": "off"}
