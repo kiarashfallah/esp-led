@@ -3,7 +3,7 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 # Allow requests from your Netlify URL (replace with your actual Netlify URL)
-CORS(app, resources={r"/led": {"origins": "https://your-site-name.netlify.app"}})
+CORS(app, resources={r"/led": {"origins": "https://led-control.netlify.app/"}})
 
 # In-memory LED state
 led_state = {"led": "off"}
