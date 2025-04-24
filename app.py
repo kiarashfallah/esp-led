@@ -1,25 +1,22 @@
 from flask import Flask, jsonify, request
-from flask_cors import CORS
+import json
 
 app = Flask(__name__)
-# Allow requests from your Netlify URL (replace with your actual Netlify URL)
-CORS(app, resources={r"/led": {"origins": "https://led-control.netlify.app/"}})
+LED_STATE_FILE = 'led_state.json'
 
-# In-memory LED state
-led_state = {"led": "off"}
+@app.route('/led/<state>', methods=['POST'])
+def set_led(state):
+    if state not in ['on', 'off']:
+        return jsonify({'error': 'Invalid state'}), 400
+    with open(LED_STATE_FILE, 'w') as f:
+        json.dump({'led': state}, f)
+    return jsonify({'status': 'ok', 'led': state})
 
-@app.route('/led', methods=['GET'])
-def get_led_state():
-    return jsonify(led_state)
-
-@app.route('/led', methods=['POST'])
-def set_led_state():
-    global led_state
-    data = request.get_json()
-    if 'led' in data and data['led'] in ['on', 'off']:
-        led_state = {"led": data['led']}
-        return jsonify({"message": "LED state updated", "led": led_state['led']}), 200
-    return jsonify({"error": "Invalid LED state"}), 400
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+@app.route('/led/status', methods=['GET'])
+def get_led_status():
+    try:
+        with open(LED_STATE_FILE, 'r') as f:
+            state = json.load(f)
+        return jsonify(state)
+    except:
+        return jsonify({'led': 'off'})  # default
